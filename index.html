@@ -9,16 +9,17 @@
         #topics { margin: 20px; }
         img { max-width: 100%; height: auto; margin-top: 20px; }
         .question-container { margin-bottom: 20px; }
-        .reveal-btn { margin-top: 10px; padding: 5px 10px; cursor: pointer; }
+        .reveal-btn, .next-btn { margin-top: 10px; padding: 5px 10px; cursor: pointer; }
         .correct-option { display: none; font-weight: bold; color: green; }
     </style>
 </head>
 <body>
     <h1>Physics MCQ Viewer</h1>
-    <select id="topics" onchange="loadImages()">
+    <select id="topics" onchange="startQuiz()">
         <option value="">Select a Topic</option>
     </select>
     <div id="image-container"></div>
+    <button class="next-btn" onclick="nextQuestion()">Next</button>
 
     <script>
         const topics = ["Mechanics", "Thermodynamics", "Electromagnetism", "Optics"];
@@ -29,6 +30,9 @@
             "Electromagnetism": ["C", "A", "D", "B", "C", "A", "B", "D", "C", "A"],
             "Optics": ["B", "D", "A", "C", "B", "D", "A", "C", "B", "D"]
         };
+        let questionOrder = [];
+        let currentQuestionIndex = 0;
+        let selectedTopic = "";
         
         window.onload = function() {
             const select = document.getElementById("topics");
@@ -40,37 +44,50 @@
             });
         };
 
-        function loadImages() {
-            const topic = document.getElementById("topics").value;
+        function startQuiz() {
+            selectedTopic = document.getElementById("topics").value;
+            if (!selectedTopic) return;
+            questionOrder = Array.from({length: 10}, (_, i) => i + 1).sort(() => Math.random() - 0.5);
+            currentQuestionIndex = 0;
+            showQuestion();
+        }
+
+        function showQuestion() {
             const container = document.getElementById("image-container");
             container.innerHTML = "";
             
-            if (!topic) return;
+            if (!selectedTopic || currentQuestionIndex >= questionOrder.length) return;
             
-            for (let i = 1; i <= 10; i++) {  // Assuming up to 10 images per topic
-                let questionDiv = document.createElement("div");
-                questionDiv.className = "question-container";
-                
-                let img = document.createElement("img");
-                img.src = `${basePath}${topic}/q${i}.jpg`;
-                img.onerror = function() { this.style.display = 'none'; }; // Hide if not found
-                
-                let revealBtn = document.createElement("button");
-                revealBtn.className = "reveal-btn";
-                revealBtn.textContent = "Reveal Answer";
-                
-                let answerDiv = document.createElement("div");
-                answerDiv.className = "correct-option";
-                answerDiv.textContent = "Correct Answer: " + (correctAnswers[topic] ? correctAnswers[topic][i-1] : "N/A");
-                
-                revealBtn.onclick = function() {
-                    answerDiv.style.display = "block";
-                };
-                
-                questionDiv.appendChild(img);
-                questionDiv.appendChild(revealBtn);
-                questionDiv.appendChild(answerDiv);
-                container.appendChild(questionDiv);
+            let questionDiv = document.createElement("div");
+            questionDiv.className = "question-container";
+            
+            let img = document.createElement("img");
+            let questionNumber = questionOrder[currentQuestionIndex];
+            img.src = `${basePath}${selectedTopic}/q${questionNumber}.jpg`;
+            img.onerror = function() { this.style.display = 'none'; };
+            
+            let revealBtn = document.createElement("button");
+            revealBtn.className = "reveal-btn";
+            revealBtn.textContent = "Reveal Answer";
+            
+            let answerDiv = document.createElement("div");
+            answerDiv.className = "correct-option";
+            answerDiv.textContent = "Correct Answer: " + (correctAnswers[selectedTopic] ? correctAnswers[selectedTopic][questionNumber - 1] : "N/A");
+            
+            revealBtn.onclick = function() {
+                answerDiv.style.display = "block";
+            };
+            
+            questionDiv.appendChild(img);
+            questionDiv.appendChild(revealBtn);
+            questionDiv.appendChild(answerDiv);
+            container.appendChild(questionDiv);
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < questionOrder.length - 1) {
+                currentQuestionIndex++;
+                showQuestion();
             }
         }
     </script>
