@@ -25,10 +25,10 @@
         const topics = ["Mechanics", "Thermodynamics", "Electromagnetism", "Optics"];
         const basePath = "mcq_images/";
         const correctAnswers = {
-            "Mechanics": ["A", "B", "C", "D", "A", "C", "B", "D", "A", "B"],
-            "Thermodynamics": ["D", "C", "B", "A", "D", "B", "C", "A", "D", "C"],
-            "Electromagnetism": ["C", "A", "D", "B", "C", "A", "B", "D", "C", "A"],
-            "Optics": ["B", "D", "A", "C", "B", "D", "A", "C", "B", "D"]
+            "Mechanics": {"q1": "A", "q2": "B", "q3": "C", "q4": "D", "q5": "A", "q6": "C", "q7": "B", "q8": "D", "q9": "A", "q10": "B"},
+            "Thermodynamics": {"q1": "D", "q2": "C", "q3": "B", "q4": "A", "q5": "D", "q6": "B", "q7": "C", "q8": "A", "q9": "D", "q10": "C"},
+            "Electromagnetism": {"q1": "C", "q2": "A", "q3": "D", "q4": "B", "q5": "C", "q6": "A", "q7": "B", "q8": "D", "q9": "C", "q10": "A"},
+            "Optics": {"q1": "B", "q2": "D", "q3": "A", "q4": "C", "q5": "B", "q6": "D", "q7": "A", "q8": "C", "q9": "B", "q10": "D"}
         };
         let questionOrder = [];
         let currentQuestionIndex = 0;
@@ -47,7 +47,7 @@
         function startQuiz() {
             selectedTopic = document.getElementById("topics").value;
             if (!selectedTopic) return;
-            questionOrder = Array.from({length: 10}, (_, i) => i + 1).sort(() => Math.random() - 0.5);
+            questionOrder = Object.keys(correctAnswers[selectedTopic]).sort(() => Math.random() - 0.5);
             currentQuestionIndex = 0;
             showQuestion();
         }
@@ -62,8 +62,8 @@
             questionDiv.className = "question-container";
             
             let img = document.createElement("img");
-            let questionNumber = questionOrder[currentQuestionIndex];
-            img.src = `${basePath}${selectedTopic}/q${questionNumber}.jpg`;
+            let questionKey = questionOrder[currentQuestionIndex];
+            img.src = `${basePath}${selectedTopic}/${questionKey}.jpg`;
             img.onerror = function() { this.style.display = 'none'; };
             
             let revealBtn = document.createElement("button");
@@ -72,7 +72,7 @@
             
             let answerDiv = document.createElement("div");
             answerDiv.className = "correct-option";
-            answerDiv.textContent = "Correct Answer: " + (correctAnswers[selectedTopic] ? correctAnswers[selectedTopic][questionNumber - 1] : "N/A");
+            answerDiv.textContent = "Correct Answer: " + (correctAnswers[selectedTopic][questionKey] || "N/A");
             
             revealBtn.onclick = function() {
                 answerDiv.style.display = "block";
