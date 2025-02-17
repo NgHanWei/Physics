@@ -8,6 +8,9 @@
         body { font-family: Arial, sans-serif; text-align: center; }
         #topics { margin: 20px; }
         img { max-width: 100%; height: auto; margin-top: 20px; }
+        .question-container { margin-bottom: 20px; }
+        .reveal-btn { margin-top: 10px; padding: 5px 10px; cursor: pointer; }
+        .correct-option { display: none; font-weight: bold; color: green; }
     </style>
 </head>
 <body>
@@ -20,6 +23,12 @@
     <script>
         const topics = ["Mechanics", "Thermodynamics", "Electromagnetism", "Optics"];
         const basePath = "mcq_images/";
+        const correctAnswers = {
+            "Mechanics": ["A", "B", "C", "D", "A", "C", "B", "D", "A", "B"],
+            "Thermodynamics": ["D", "C", "B", "A", "D", "B", "C", "A", "D", "C"],
+            "Electromagnetism": ["C", "A", "D", "B", "C", "A", "B", "D", "C", "A"],
+            "Optics": ["B", "D", "A", "C", "B", "D", "A", "C", "B", "D"]
+        };
         
         window.onload = function() {
             const select = document.getElementById("topics");
@@ -39,10 +48,29 @@
             if (!topic) return;
             
             for (let i = 1; i <= 10; i++) {  // Assuming up to 10 images per topic
+                let questionDiv = document.createElement("div");
+                questionDiv.className = "question-container";
+                
                 let img = document.createElement("img");
                 img.src = `${basePath}${topic}/q${i}.jpg`;
                 img.onerror = function() { this.style.display = 'none'; }; // Hide if not found
-                container.appendChild(img);
+                
+                let revealBtn = document.createElement("button");
+                revealBtn.className = "reveal-btn";
+                revealBtn.textContent = "Reveal Answer";
+                
+                let answerDiv = document.createElement("div");
+                answerDiv.className = "correct-option";
+                answerDiv.textContent = "Correct Answer: " + (correctAnswers[topic] ? correctAnswers[topic][i-1] : "N/A");
+                
+                revealBtn.onclick = function() {
+                    answerDiv.style.display = "block";
+                };
+                
+                questionDiv.appendChild(img);
+                questionDiv.appendChild(revealBtn);
+                questionDiv.appendChild(answerDiv);
+                container.appendChild(questionDiv);
             }
         }
     </script>
