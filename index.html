@@ -22,13 +22,14 @@
     <button class="next-btn" onclick="nextQuestion()">Next</button>
 
     <script>
-        const topics = ["Measurements","Circular Motion","WEP","G-field"];
+        const topics = ["Measurements","Circular Motion","WEP","G-Field","E-Field"];
         const basePath = "mcq_images/";
         const correctAnswers = {
             "Measurements": {"q1": "B", "q2": "D", "q3": "A", "q4": "C", "q5": "B", "q6": "D", "q7": "A", "q8": "C", "q9": "B", "q10": "D"},
             "Circular Motion": {"q1": "B", "q2": "D", "q3": "A", "q4": "C", "q5": "B", "q6": "D", "q7": "A", "q8": "C", "q9": "B", "q10": "D"},
             "WEP": {"q1": "B", "q2": "D", "q3": "A", "q4": "C", "q5": "B", "q6": "D", "q7": "A", "q8": "C", "q9": "B", "q10": "D"},
-            "G-field": {"q1": "B", "q2": "D", "q3": "A", "q4": "C", "q5": "B", "q6": "D", "q7": "A", "q8": "C", "q9": "B", "q10": "D"}
+            "G-Field": {"q1": "B", "q2": "D", "q3": "A", "q4": "C", "q5": "B", "q6": "D", "q7": "A", "q8": "C", "q9": "B", "q10": "D"},
+            "E-Field": {"q1": "B", "q2": "D", "q3": "A", "q4": "C", "q5": "B", "q6": "D", "q7": "A", "q8": "C", "q9": "B", "q10": "D"}
         };
         let questionOrder = [];
         let currentQuestionIndex = 0;
