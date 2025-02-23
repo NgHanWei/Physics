@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Physics MCQ Viewer</title>
+    <title>Physics MCQ by Dr. Han Wei</title>
     <style>
         body { font-family: Arial, sans-serif; text-align: center; }
         #topics { margin: 20px; }
@@ -14,7 +14,7 @@
     </style>
 </head>
 <body>
-    <h1>Physics MCQ Viewer</h1>
+    <h1>Physics MCQ by Dr. Han Wei</h1>
     <select id="topics" onchange="startQuiz()">
         <option value="">Select a Topic</option>
     </select>
@@ -22,13 +22,9 @@
     <button class="next-btn" onclick="nextQuestion()">Next</button>
 
     <script>
-        const topics = ["Mechanics", "Thermodynamics", "Electromagnetism", "Optics","Measurements"];
+        const topics = ["Measurements"];
         const basePath = "mcq_images/";
         const correctAnswers = {
-            "Mechanics": {"q1": "A", "q2": "B", "q3": "C", "q4": "D", "q5": "A", "q6": "C", "q7": "B", "q8": "D", "q9": "A", "q10": "B"},
-            "Thermodynamics": {"q1": "D", "q2": "C", "q3": "B", "q4": "A", "q5": "D", "q6": "B", "q7": "C", "q8": "A", "q9": "D", "q10": "C"},
-            "Electromagnetism": {"q1": "C", "q2": "A", "q3": "D", "q4": "B", "q5": "C", "q6": "A", "q7": "B", "q8": "D", "q9": "C", "q10": "A"},
-            "Optics": {"q1": "B", "q2": "D", "q3": "A", "q4": "C", "q5": "B", "q6": "D", "q7": "A", "q8": "C", "q9": "B", "q10": "D"},
             "Measurements": {"q1": "B", "q2": "D", "q3": "A", "q4": "C", "q5": "B", "q6": "D", "q7": "A", "q8": "C", "q9": "B", "q10": "D"}
         };
         let questionOrder = [];
