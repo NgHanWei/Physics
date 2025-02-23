@@ -5,12 +5,66 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Physics MCQ by Dr. Han Wei</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; }
-        #topics { margin: 20px; }
-        img { max-width: 100%; height: auto; margin-top: 20px; }
-        .question-container { margin-bottom: 20px; }
-        .reveal-btn, .next-btn { margin-top: 10px; padding: 5px 10px; cursor: pointer; }
-        .correct-option { display: none; font-weight: bold; color: green; }
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            color: #333;
+            padding: 20px;
+        }
+        h1 {
+            color: #007bff;
+        }
+        select {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+        .question-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            display: inline-block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            margin-top: 10px;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+            padding: 5px;
+            background: white;
+        }
+        .reveal-btn, .next-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+        .reveal-btn:hover, .next-btn:hover {
+            background: #0056b3;
+        }
+        .correct-option {
+            display: none;
+            font-weight: bold;
+            color: green;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -25,13 +79,11 @@
         const topics = ["Measurements","Circular Motion","WEP","G-Field","E-Field"];
         const basePath = "mcq_images/";
         const correctAnswers = {
-            "Measurements": {"q1": "B", "q2": "D", "q3": "A", "q4": "C", "q5": "B", "q6": "D", "q7": "A", "q8": "C", "q9": "B", "q10": "D"},
-            "Circular Motion": {"q1": "B", "q2": "D", "q3": "A", "q4": "C", "q5": "B", "q6": "D", "q7": "A", "q8": "C", "q9": "B", "q10": "D"},
-            "WEP": {"q1": "B", "q2": "D", "q3": "A", "q4": "C", "q5": "B", "q6": "D", "q7": "A", "q8": "C", "q9": "B", "q10": "D"},
-            "G-Field": {"q1": "B", "q2": "D", "q3": "A", "q4": "C", "q5": "B", "q6": "D", "q7": "A", "q8": "C", "q9": "B", "q10": "D"},
-            "E-Field": {"q1": "D", "q2": "B", "q3": "A", "q4": "A", "q5": "B", "q6": "A", "q7": "C", "q8": "A", "q9": "C", "q10": "D", "q11": "A", "q12": "D",  
-  "q13": "A", "q14": "B", "q15": "A", "q16": "D", "q17": "A", "q18": "C", "q19": "B", "q20": "B", "q21": "A", "q22": "A", "q23": "A", "q24": "B",  
-  "q25": "A", "q26": "D", "q27": "B", "q28": "D", "q29": "C", "q30": "A"}
+            "Measurements": {"q1": "B", "q2": "D", "q3": "A", "q4": "C", "q5": "B"},
+            "Circular Motion": {"q1": "B", "q2": "D", "q3": "A", "q4": "C", "q5": "B"},
+            "WEP": {"q1": "B", "q2": "D", "q3": "A", "q4": "C", "q5": "B"},
+            "G-Field": {"q1": "B", "q2": "D", "q3": "A", "q4": "C", "q5": "B"},
+            "E-Field": {"q1": "D", "q2": "B", "q3": "A", "q4": "A", "q5": "B", "q6": "A", "q7": "C", "q8": "A", "q9": "C", "q10": "D"}
         };
         let questionOrder = [];
         let currentQuestionIndex = 0;
