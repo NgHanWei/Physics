@@ -85,7 +85,7 @@
     </select>
     <div id="image-container"></div>
     <button class="next-btn" onclick="nextQuestion()">Next</button>
-
+    <button onclick="openQuizTab()">Generate Quiz in New Tab</button>
     <script>
         const topics = ["Measurements","Circular Motion","WEP","G-Field","Superposition","E-Field"];
         const basePath = "mcq_images/";
@@ -159,6 +159,34 @@
                 currentQuestionIndex++;
                 showQuestion();
             }
+        }
+
+        function openQuizTab() {
+            const selectedTopics = Array.from(document.getElementById("topics").selectedOptions).map(option => option.value);
+            if (selectedTopics.length === 0) return;
+            let questions = [];
+            
+            selectedTopics.forEach(topic => {
+                let topicQuestions = Object.keys(correctAnswers[topic]).map(q => ({ topic, q }));
+                questions.push(...topicQuestions);
+            });
+            
+            questions = questions.sort(() => Math.random() - 0.5).slice(0, 30);
+            
+            let newTab = window.open("", "_blank");
+            newTab.document.write("<html><head><title>Generated Quiz</title></head><body>");
+            newTab.document.write("<h1>Generated Quiz</h1>");
+            
+            questions.forEach(({ topic, q }) => {
+                newTab.document.write(`<div class='question-container'>");
+                newTab.document.write(`<img src='${basePath}${topic}/${q}.jpg' onerror='this.style.display="none";'>");
+                newTab.document.write(`<br><button onclick='this.nextElementSibling.style.display="block"'>Reveal Answer</button>");
+                newTab.document.write(`<div class='correct-option' style='display:none;'>Correct Answer: ${correctAnswers[topic][q]}</div>");
+                newTab.document.write("</div>");
+            });
+            
+            newTab.document.write("</body></html>");
+            newTab.document.close();
         }
     </script>
 </body>
