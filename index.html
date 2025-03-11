@@ -14,6 +14,25 @@
         }
         h1 {
             color: #007bff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+            display: block;
+            font-size: min(3vw, 16px);
+        }
+        @media screen and (max-width: 600px) {
+            h1 {
+                font-size: 5vw;
+            }
+        }
+        select {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            margin-bottom: 20px;
+            cursor: pointer;
         }
         .question-container {
             background: white;
@@ -22,6 +41,11 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             margin-bottom: 20px;
             display: inline-block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         img {
             max-width: 100%;
@@ -32,7 +56,7 @@
             padding: 5px;
             background: white;
         }
-        button {
+        .reveal-btn, .next-btn {
             background: #007bff;
             color: white;
             border: none;
@@ -43,7 +67,7 @@
             transition: 0.3s;
             margin-top: 10px;
         }
-        button:hover {
+        .reveal-btn:hover, .next-btn:hover {
             background: #0056b3;
         }
         .correct-option {
@@ -56,62 +80,86 @@
 </head>
 <body>
     <h1>Physics MCQ by Dr. Han Wei</h1>
-    <div id="topics-container"></div>
-    <br>
-    <button onclick="openQuizTab()">Generate Quiz in New Tab</button>
+    <select id="topics" onchange="startQuiz()">
+        <option value="">Select a Topic</option>
+    </select>
+    <div id="image-container"></div>
+    <button class="next-btn" onclick="nextQuestion()">Next</button>
     <script>
-        const topics = ["Measurements", "Circular Motion", "WEP", "G-Field", "Superposition", "E-Field"];
+        const topics = ["Measurements","Circular Motion","WEP","G-Field","Superposition","E-Field"];
         const basePath = "mcq_images/";
         const correctAnswers = {
-            "Measurements": {"q1": "D", "q2": "B", "q3": "B"},
-            "Circular Motion": {"q1": "B", "q2": "D", "q3": "A"},
-            "WEP": {"q1": "B", "q2": "D", "q3": "A"},
-            "Superposition": {"q1": "C", "q2": "C", "q3": "C"},
-            "G-Field": {"q1": "B", "q2": "D", "q3": "C"},
-            "E-Field": {"q1": "D", "q2": "B", "q3": "A"}
+            "Measurements": {"q1": "D", "q2": "B", "q3": "B", "q4": "D", "q5": "B", "q6": "C", "q7": "D", "q8": "A", "q9": "C", "q10": "D"},
+            "Circular Motion": {"q1": "B", "q2": "D", "q3": "A", "q4": "C", "q5": "B", "q6": "D", "q7": "A", "q8": "C", "q9": "B", "q10": "D"},
+            "WEP": {"q1": "B", "q2": "D", "q3": "A", "q4": "C", "q5": "B", "q6": "D", "q7": "A", "q8": "C", "q9": "B", "q10": "D"},
+            "Superposition": {"q1": "C", "q2": "C", "q3": "C", "q4": "B", "q5": "D", "q6": "B", "q7": "A", "q8": "C", "q9": "D", "q10": "C"},
+            "G-Field": {"q1": "B", "q2": "D", "q3": "C", "q4": "A", "q5": "A", "q6": "A", "q7": "B", "q8": "B", "q9": "A", "q10": "D"},
+            "E-Field": {"q1": "D", "q2": "B", "q3": "A", "q4": "A", "q5": "B", "q6": "A", "q7": "C", "q8": "A", "q9": "C", "q10": "D", "q11": "A", "q12": "D",  
+  "q13": "A", "q14": "B", "q15": "A", "q16": "D", "q17": "A", "q18": "C", "q19": "B", "q20": "B", "q21": "A", "q22": "A", "q23": "A", "q24": "B",  
+  "q25": "A", "q26": "D", "q27": "B", "q28": "D", "q29": "C", "q30": "A"}
         };
+        let questionOrder = [];
+        let currentQuestionIndex = 0;
+        let selectedTopic = "";
         
         window.onload = function() {
-            const container = document.getElementById("topics-container");
+            const select = document.getElementById("topics");
             topics.forEach(topic => {
-                let label = document.createElement("label");
-                let checkbox = document.createElement("input");
-                checkbox.type = "checkbox";
-                checkbox.value = topic;
-                label.appendChild(checkbox);
-                label.appendChild(document.createTextNode(" " + topic));
-                container.appendChild(label);
-                container.appendChild(document.createElement("br"));
+                let option = document.createElement("option");
+                option.value = topic;
+                option.textContent = topic;
+                select.appendChild(option);
             });
         };
-        
-        function openQuizTab() {
-            const selectedTopics = Array.from(document.querySelectorAll("#topics-container input:checked")).map(input => input.value);
-            if (selectedTopics.length === 0) return;
-            let questions = [];
-            
-            selectedTopics.forEach(topic => {
-                let topicQuestions = Object.keys(correctAnswers[topic]).map(q => ({ topic, q }));
-                questions.push(...topicQuestions);
-            });
-            
-            questions = questions.sort(() => Math.random() - 0.5).slice(0, 30);
-            
-            let newTab = window.open("", "_blank");
-            newTab.document.write("<html><head><title>Generated Quiz</title></head><body>");
-            newTab.document.write("<h1>Generated Quiz</h1>");
-            
-            questions.forEach(({ topic, q }) => {
-                newTab.document.write(`<div class='question-container'>`);
-                newTab.document.write(`<img src='${basePath}${topic}/${q}.jpg' onerror='this.style.display="none";'>`);
-                newTab.document.write(`<br><button onclick='this.nextElementSibling.style.display="block"'>Reveal Answer</button>`);
-                newTab.document.write(`<div class='correct-option' style='display:none;'>Correct Answer: ${correctAnswers[topic][q]}</div>`);
-                newTab.document.write(`</div>`);
-            });
-            
-            newTab.document.write("</body></html>");
-            newTab.document.close();
+
+        function startQuiz() {
+            selectedTopic = document.getElementById("topics").value;
+            if (!selectedTopic) return;
+            questionOrder = Object.keys(correctAnswers[selectedTopic]).sort(() => Math.random() - 0.5);
+            currentQuestionIndex = 0;
+            showQuestion();
         }
+
+        function showQuestion() {
+            const container = document.getElementById("image-container");
+            container.innerHTML = "";
+            
+            if (!selectedTopic || currentQuestionIndex >= questionOrder.length) return;
+            
+            let questionDiv = document.createElement("div");
+            questionDiv.className = "question-container";
+            
+            let img = document.createElement("img");
+            let questionKey = questionOrder[currentQuestionIndex];
+            img.src = `${basePath}${selectedTopic}/${questionKey}.jpg`;
+            img.onerror = function() { this.style.display = 'none'; };
+            
+            let revealBtn = document.createElement("button");
+            revealBtn.className = "reveal-btn";
+            revealBtn.textContent = "Reveal Answer";
+            
+            let answerDiv = document.createElement("div");
+            answerDiv.className = "correct-option";
+            answerDiv.textContent = "Correct Answer: " + (correctAnswers[selectedTopic][questionKey] || "N/A");
+            
+            revealBtn.onclick = function() {
+                answerDiv.style.display = "block";
+            };
+            
+            questionDiv.appendChild(img);
+            questionDiv.appendChild(document.createElement("br"));
+            questionDiv.appendChild(revealBtn);
+            questionDiv.appendChild(answerDiv);
+            container.appendChild(questionDiv);
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < questionOrder.length - 1) {
+                currentQuestionIndex++;
+                showQuestion();
+            }
+        }
+
     </script>
 </body>
 </html>
