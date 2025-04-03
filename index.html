@@ -12,35 +12,60 @@
             color: #333;
             padding: 20px;
         }
-        .topic-container {
-            text-align: left;
-            display: inline-block;
-            margin-bottom: 20px;
+        .container {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            flex-wrap: wrap;
         }
-        .start-btn {
+        .section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        select, button {
+            padding: 10px;
+            font-size: 16px;
+            margin-top: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .next-btn, .start-quiz-btn {
             background: #007bff;
             color: white;
             border: none;
-            padding: 10px 15px;
-            font-size: 16px;
-            cursor: pointer;
-            border-radius: 5px;
             transition: 0.3s;
-            margin-top: 10px;
         }
-        .start-btn:hover {
+        .next-btn:hover, .start-quiz-btn:hover {
             background: #0056b3;
+        }
+        .checkbox-group {
+            text-align: left;
         }
     </style>
 </head>
 <body>
     <h1>Physics MCQ by Dr. Han Wei</h1>
-    <div class="topic-container" id="topics-container"></div>
-    <br>
-    <button class="start-btn" onclick="startMultiTopicQuiz()">Start Multi-Topic Quiz</button>
-    
+    <div class="container">
+        <div class="section">
+            <h2>Single Topic Quiz</h2>
+            <select id="topics" onchange="startQuiz()">
+                <option value="">Select a Topic</option>
+            </select>
+            <div id="image-container"></div>
+            <button class="next-btn" onclick="nextQuestion()">Next</button>
+        </div>
+        <div class="section">
+            <h2>Multi-Topic Quiz</h2>
+            <div class="checkbox-group" id="topic-checkboxes"></div>
+            <button class="start-quiz-btn" onclick="startMultiTopicQuiz()">Start Quiz</button>
+        </div>
+    </div>
+
     <script>
-        const topics = ["Measurements", "Circular Motion", "WEP", "G-Field", "Superposition", "E-Field"];
+        const topics = ["Measurements","Circular Motion","WEP","G-Field","Superposition","E-Field"];
+        const basePath = "mcq_images/";
         const correctAnswers = {
             "Measurements": {"q1": "D", "q2": "B", "q3": "B", "q4": "D", "q5": "B"},
             "Circular Motion": {"q1": "B", "q2": "D", "q3": "A", "q4": "C", "q5": "B"},
@@ -49,38 +74,80 @@
             "G-Field": {"q1": "B", "q2": "D", "q3": "C", "q4": "A", "q5": "A"},
             "E-Field": {"q1": "D", "q2": "B", "q3": "A", "q4": "A", "q5": "B"}
         };
-
+        
         window.onload = function() {
-            const container = document.getElementById("topics-container");
+            const select = document.getElementById("topics");
+            const checkboxContainer = document.getElementById("topic-checkboxes");
             topics.forEach(topic => {
-                let label = document.createElement("label");
+                let option = document.createElement("option");
+                option.value = topic;
+                option.textContent = topic;
+                select.appendChild(option);
+                
                 let checkbox = document.createElement("input");
                 checkbox.type = "checkbox";
                 checkbox.value = topic;
-                label.appendChild(checkbox);
-                label.appendChild(document.createTextNode(" " + topic));
-                container.appendChild(label);
-                container.appendChild(document.createElement("br"));
+                checkbox.id = `chk-${topic}`;
+                
+                let label = document.createElement("label");
+                label.htmlFor = `chk-${topic}`;
+                label.textContent = topic;
+                
+                let div = document.createElement("div");
+                div.appendChild(checkbox);
+                div.appendChild(label);
+                checkboxContainer.appendChild(div);
             });
         };
 
+        let questionOrder = [];
+        let currentQuestionIndex = 0;
+        let selectedTopic = "";
+        
+        function startQuiz() {
+            selectedTopic = document.getElementById("topics").value;
+            if (!selectedTopic) return;
+            questionOrder = Object.keys(correctAnswers[selectedTopic]).sort(() => Math.random() - 0.5);
+            currentQuestionIndex = 0;
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const container = document.getElementById("image-container");
+            container.innerHTML = "";
+            if (!selectedTopic || currentQuestionIndex >= questionOrder.length) return;
+            
+            let questionDiv = document.createElement("div");
+            questionDiv.innerHTML = `<img src="${basePath}${selectedTopic}/${questionOrder[currentQuestionIndex]}.jpg" onerror="this.style.display='none'">`;
+            container.appendChild(questionDiv);
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < questionOrder.length - 1) {
+                currentQuestionIndex++;
+                showQuestion();
+            }
+        }
+
         function startMultiTopicQuiz() {
             let selectedTopics = [];
-            document.querySelectorAll("input[type='checkbox']:checked").forEach(checkbox => {
+            document.querySelectorAll("#topic-checkboxes input:checked").forEach(checkbox => {
                 selectedTopics.push(checkbox.value);
             });
-
-            if (selectedTopics.length === 0) return;
+            
+            if (selectedTopics.length === 0) {
+                alert("Please select at least one topic.");
+                return;
+            }
             
             let selectedQuestions = [];
             selectedTopics.forEach(topic => {
                 let questions = Object.keys(correctAnswers[topic]);
-                questions.sort(() => Math.random() - 0.5);
-                selectedQuestions.push(...questions.slice(0, 3).map(q => ({ topic, question: q })));
+                let chosen = questions.sort(() => Math.random() - 0.5).slice(0, 3);
+                chosen.forEach(q => selectedQuestions.push({ topic, question: q }));
             });
             
-            let queryString = encodeURIComponent(JSON.stringify(selectedQuestions));
-            window.open("quiz.html?data=" + queryString, "_blank");
+            window.open(`quiz.html?data=${encodeURIComponent(JSON.stringify(selectedQuestions))}`, "_blank");
         }
     </script>
 </body>
