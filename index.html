@@ -31,17 +31,38 @@
             cursor: pointer;
             border-radius: 5px;
         }
-        .next-btn, .start-quiz-btn {
+        .next-btn, .start-quiz-btn, .reveal-btn {
             background: #007bff;
             color: white;
             border: none;
             transition: 0.3s;
         }
-        .next-btn:hover, .start-quiz-btn:hover {
+        .next-btn:hover, .start-quiz-btn:hover, .reveal-btn:hover {
             background: #0056b3;
         }
         .checkbox-group {
             text-align: left;
+        }
+        .correct-option {
+            display: none;
+            font-weight: bold;
+            color: green;
+            margin-top: 10px;
+        }
+        #drive-link {
+            position: fixed;
+            bottom: 20px;
+            left: 10%;
+            transform: translateX(-50%);
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            text-decoration: none;
+        }
+        #drive-link:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
@@ -62,6 +83,8 @@
             <button class="start-quiz-btn" onclick="startMultiTopicQuiz()">Start Quiz</button>
         </div>
     </div>
+
+    <a id="drive-link" href="https://drive.google.com/drive/u/1/folders/1TBGhOQCKfu7bw47hb1PQdADX7ZAtGW1p" target="_blank">Explanations & More Qns</a>
 
     <script>
         const topics = ["Measurements","Circular Motion","WEP","G-Field","Superposition","E-Field"];
