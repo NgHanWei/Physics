@@ -118,7 +118,20 @@
             if (!selectedTopic || currentQuestionIndex >= questionOrder.length) return;
             
             let questionDiv = document.createElement("div");
-            questionDiv.innerHTML = `<img src="${basePath}${selectedTopic}/${questionOrder[currentQuestionIndex]}.jpg" onerror="this.style.display='none'">`;
+            let questionKey = questionOrder[currentQuestionIndex];
+            questionDiv.innerHTML = `<img src="${basePath}${selectedTopic}/${questionKey}.jpg" onerror="this.style.display='none'">`;
+            
+            let revealBtn = document.createElement("button");
+            revealBtn.className = "reveal-btn";
+            revealBtn.textContent = "Reveal Answer";
+            let answerDiv = document.createElement("div");
+            answerDiv.className = "correct-option";
+            answerDiv.textContent = "Correct Answer: " + (correctAnswers[selectedTopic][questionKey] || "N/A");
+            
+            revealBtn.onclick = function() { answerDiv.style.display = "block"; };
+            questionDiv.appendChild(revealBtn);
+            questionDiv.appendChild(answerDiv);
+            
             container.appendChild(questionDiv);
         }
 
