@@ -81,6 +81,8 @@
         <div class="section">
             <h2>Multi-Topic Quiz</h2>
             <div class="checkbox-group" id="topic-checkboxes"></div>
+            <label for="total-questions">Total Questions: <span id="question-count">15</span></label><br>
+            <input type="range" id="total-questions" min="1" max="30" value="15" oninput="document.getElementById('question-count').textContent = this.value">
             <button class="start-quiz-btn" onclick="startMultiTopicQuiz()">Start Quiz</button>
         </div>
     </div>
@@ -176,19 +178,24 @@
             document.querySelectorAll("#topic-checkboxes input:checked").forEach(checkbox => {
                 selectedTopics.push(checkbox.value);
             });
-            
+        
             if (selectedTopics.length === 0) {
                 alert("Please select at least one topic.");
                 return;
             }
-            
+        
+            const totalQuestions = parseInt(document.getElementById("total-questions").value);
+            const perTopic = Math.floor(totalQuestions / selectedTopics.length);
+            const remaining = totalQuestions % selectedTopics.length;
+        
             let selectedQuestions = [];
-            selectedTopics.forEach(topic => {
-                let questions = Object.keys(correctAnswers[topic]);
-                let chosen = questions.sort(() => Math.random() - 0.5).slice(0, 3);
-                chosen.forEach(q => selectedQuestions.push({ topic, question: q }));
+        
+            selectedTopics.forEach((topic, index) => {
+                let questions = Object.keys(correctAnswers[topic]).sort(() => Math.random() - 0.5);
+                let count = perTopic + (index === selectedTopics.length - 1 ? remaining : 0);
+                questions.slice(0, count).forEach(q => selectedQuestions.push({ topic, question: q }));
             });
-            
+        
             window.open(`quiz.html?data=${encodeURIComponent(JSON.stringify(selectedQuestions))}`, "_blank");
         }
     </script>
