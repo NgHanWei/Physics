@@ -188,16 +188,20 @@
             const perTopic = Math.floor(totalQuestions / selectedTopics.length);
             const remaining = totalQuestions % selectedTopics.length;
         
+            // Shuffle the selected topics to randomly assign extra questions
+            const shuffledTopics = selectedTopics.sort(() => Math.random() - 0.5);
+        
             let selectedQuestions = [];
         
-            selectedTopics.forEach((topic, index) => {
+            shuffledTopics.forEach((topic, index) => {
                 let questions = Object.keys(correctAnswers[topic]).sort(() => Math.random() - 0.5);
-                let count = perTopic + (index === selectedTopics.length - 1 ? remaining : 0);
+                let count = perTopic + (index < remaining ? 1 : 0); // Give extra question to first 'remaining' topics
                 questions.slice(0, count).forEach(q => selectedQuestions.push({ topic, question: q }));
             });
         
             window.open(`quiz.html?data=${encodeURIComponent(JSON.stringify(selectedQuestions))}`, "_blank");
         }
+
     </script>
 </body>
 </html>
